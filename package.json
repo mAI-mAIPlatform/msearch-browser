@@ -3,14 +3,7 @@
   "version": "26.7.0",
   "sideEffects": false,
   "description": "Extensible, fast and innovative web browser with material UI.",
-  "keywords": [
-    "web-browser",
-    "material",
-    "electron",
-    "react",
-    "mobx",
-    "styled-components"
-  ],
+  "keywords": ["web-browser","material","electron","react","mobx","styled-components"],
   "homepage": "https://github.com/wexond/wexond#readme",
   "main": "build/main.bundle.js",
   "author": "Mathias Tusseau <mathias.tss2012@gmail.com>",
@@ -22,9 +15,9 @@
     "url": "https://github.com/wexond/wexond/issues"
   },
   "scripts": {
-    "dev-renderer": "cross-env DEV=1 webpack serve --config webpack.config.renderer.js",
-    "dev-webpack": "cross-env DEV=1 webpack",
-    "build-renderer": "webpack --config webpack.config.renderer.js",
+    "dev-renderer": "cross-env DEV=1 NODE_OPTIONS=--openssl-legacy-provider webpack serve --config webpack.config.renderer.js",
+    "dev-webpack": "cross-env DEV=1 NODE_OPTIONS=--openssl-legacy-provider webpack",
+    "build-renderer": "cross-env NODE_OPTIONS=--openssl-legacy-provider webpack --config webpack.config.renderer.js",
     "dev": "cross-env START=1 npm run watch",
     "build": "rimraf build && concurrently \"npm run build-renderer\" \"webpack\"",
     "ci-build": "node scripts/ci-build.js",

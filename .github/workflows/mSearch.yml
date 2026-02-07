@@ -35,25 +35,8 @@ jobs:
         env:
           ADBLOCK: true
 
-      # 🐍 Installer Python sur macOS seulement
-      - name: Setup Python for macOS
-        if: runner.os == 'macOS'
-        run: |
-          brew install python@3
-          # ✅ Lien safe dans /usr/local/bin
-          ln -sf $(which python3) /usr/local/bin/python
-
-      # 🔧 Installer Python sur Ubuntu seulement
-      - name: Setup Python for Ubuntu
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python3 python3-pip
-          sudo ln -sf $(which python3) /usr/local/bin/python
-
-      # 🔧 Installer Python sur Windows seulement
-      - name: Setup Python for Windows
-        if: runner.os == 'Windows'
+      # 🐍 Installer Python (universel)
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
@@ -72,4 +55,3 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           echo "sign=false" >> electron-builder.json
-

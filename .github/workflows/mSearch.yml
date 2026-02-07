@@ -14,7 +14,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-      # 📦 Checkout
+      # 📦 Checkout repo
       - uses: actions/checkout@v4
 
       # ⚡ Node moderne + cache Yarn
@@ -23,7 +23,7 @@ jobs:
           node-version: 20
           cache: yarn
 
-      # 🔧 Force npm registry (évite bug nlark)
+      # 🔧 Force npm registry
       - name: Fix registry
         run: yarn config set registry https://registry.npmjs.org
 
@@ -33,13 +33,9 @@ jobs:
         env:
           ADBLOCK: true
 
-      # 🔐 Fix OpenSSL legacy provider (Node 20 + Webpack)
-      - name: Fix OpenSSL legacy provider
-        run: echo "NODE_OPTIONS=--openssl-legacy-provider" >> $GITHUB_ENV
-
-      # 🧠 Build
+      # 🔐 Build with OpenSSL legacy provider
       - name: Build the app
-        run: yarn ci-build
+        run: NODE_OPTIONS=--openssl-legacy-provider yarn ci-build
         env:
           GH_TOKEN: ${{ secrets.token }}
           MAC_CERTS: ${{ secrets.mac_certs }}

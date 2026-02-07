@@ -23,21 +23,23 @@ jobs:
           node-version: 20
           cache: yarn
 
-      # 🔧 Fix npm registry (évite bugs Yarn / nlark)
+      # 🔧 Force npm registry (évite bug nlark)
       - name: Fix registry
         run: yarn config set registry https://registry.npmjs.org
 
-      # 📦 Install dependencies
+      # 📦 Install deps
       - name: Install dependencies
         run: yarn install --frozen-lockfile
         env:
           ADBLOCK: true
 
-      # 🧠 Build avec fix OpenSSL pour Node 20
+      # 🔐 Fix OpenSSL legacy provider (Node 20 + Webpack)
+      - name: Fix OpenSSL legacy provider
+        run: echo "NODE_OPTIONS=--openssl-legacy-provider" >> $GITHUB_ENV
+
+      # 🧠 Build
       - name: Build the app
-        run: |
-          export NODE_OPTIONS=--openssl-legacy-provider
-          yarn ci-build
+        run: yarn ci-build
         env:
           GH_TOKEN: ${{ secrets.token }}
           MAC_CERTS: ${{ secrets.mac_certs }}

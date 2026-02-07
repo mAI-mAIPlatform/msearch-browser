@@ -11,35 +11,37 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v2
+      # 📦 Checkout
+      - uses: actions/checkout@v4
 
-      - name: Install Node.js
-        uses: actions/setup-node@v1
+      # ⚡ Node moderne + cache Yarn (beaucoup + rapide)
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: yarn
 
-      # - name: Install required build toolchain
-      # if: matrix.os == 'ubuntu-latest'
-      # run: sudo apt-get install gcc-multilib g++-multilib
+      # 🔧 Force npm registry (évite bug nlark à vie)
+      - name: Fix registry
+        run: yarn config set registry https://registry.npmjs.org
 
+      # 📦 Install deps
       - name: Install dependencies
         run: yarn install --frozen-lockfile
         env:
           ADBLOCK: true
 
-      - name: Get commit message
-        run: echo "::set-output name=message::$(git log --no-merges -1 --oneline)"
+      # 🔐 Fix OpenSSL (Webpack + Node 20)
+      - name: Fix OpenSSL legacy provider
+        run: echo "NODE_OPTIONS=--openssl-legacy-provider" >> $GITHUB_ENV
 
+      # 🧠 Build
       - name: Build the app
         run: yarn ci-build
         env:
           GH_TOKEN: ${{ secrets.token }}
-
           MAC_CERTS: ${{ secrets.mac_certs }}
           MAC_CERTS_PASSWORD: ${{ secrets.mac_certs_password }}
-
-          RELEASE: ${{ contains(steps.log.outputs.message, 'bump version') }}
+          RELEASE: false

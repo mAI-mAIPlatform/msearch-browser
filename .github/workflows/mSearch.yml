@@ -1,4 +1,4 @@
-name: mSearch
+name: mSearch Build & Publish
 
 on:
   push:
@@ -9,43 +9,37 @@ jobs:
   release:
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest] # ❌ macOS supprimé
 
     runs-on: ${{ matrix.os }}
 
     env:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      RELEASE: true
 
     steps:
       # 📦 Clone repo
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       # ⚡ Node 20 + cache Yarn
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: yarn
 
-      # 🔧 Registry npm safe
-      - name: Fix npm registry
-        run: yarn config set registry https://registry.npmjs.org
+      # 🔧 npm registry safe
+      - run: yarn config set registry https://registry.npmjs.org
 
-      # 📦 Install deps
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      # 📦 install deps
+      - run: yarn install --frozen-lockfile
         env:
           ADBLOCK: true
 
-      # 🐍 Python (node-gyp / Electron modules)
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      # 🐍 python (node-gyp)
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      # 🔐 Build + Publish (auto OS)
+      # 🔐 Build + Publish auto
       - name: Build & Publish
+        run: npx cross-env NODE_OPTIONS=--openssl-legacy-provider electron-builder -p always
         shell: bash
-        run: npx cross-env NODE_OPTIONS=--openssl-legacy-provider yarn ci-build

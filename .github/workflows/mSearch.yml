@@ -1,4 +1,4 @@
-name: mSearch Build & Publish
+name: mSearch
 
 on:
   push:
@@ -9,47 +9,43 @@ jobs:
   release:
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest] # multi-OS
+        os: [windows-latest, macos-latest, ubuntu-latest]
+
     runs-on: ${{ matrix.os }}
+
     env:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }} # Personal Access Token GitHub
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
       RELEASE: true
 
     steps:
-      # 📦 Checkout du repo
+      # 📦 Clone repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ⚡ Setup Node + cache Yarn
+      # ⚡ Node 20 + cache Yarn
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: yarn
 
-      # 🔧 Forcer le registry npm
+      # 🔧 Registry npm safe
       - name: Fix npm registry
         run: yarn config set registry https://registry.npmjs.org
 
-      # 📦 Installer les dépendances
+      # 📦 Install deps
       - name: Install dependencies
         run: yarn install --frozen-lockfile
         env:
           ADBLOCK: true
 
-      # 🐍 Installer Python (nécessaire pour certains modules Electron)
+      # 🐍 Python (node-gyp / Electron modules)
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      # 🔐 Build & Publish
+      # 🔐 Build + Publish (auto OS)
       - name: Build & Publish
-        run: |
-          if [ "${{ matrix.os }}" == "windows-latest" ]; then
-            npx cross-env NODE_OPTIONS=--openssl-legacy-provider yarn ci-build --win
-          elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-            npx cross-env NODE_OPTIONS=--openssl-legacy-provider yarn ci-build --mac
-          else
-            npx cross-env NODE_OPTIONS=--openssl-legacy-provider yarn ci-build --linux
-          fi
+        shell: bash
+        run: npx cross-env NODE_OPTIONS=--openssl-legacy-provider yarn ci-build

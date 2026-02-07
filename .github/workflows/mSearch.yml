@@ -1,4 +1,4 @@
-name: Build
+name: mSearch
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 14
+          node-version: 16
 
       # - name: Install required build toolchain
       # if: matrix.os == 'ubuntu-latest'

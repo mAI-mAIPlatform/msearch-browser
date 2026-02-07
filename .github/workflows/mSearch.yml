@@ -41,5 +41,5 @@ jobs:
       - name: Build the app
         run: npx cross-env NODE_OPTIONS=--openssl-legacy-provider yarn ci-build
         env:
-          GH_TOKEN: ${{ secrets.token }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }} # ✅ Utilise ton secret GH_TOKEN
           RELEASE: false

@@ -7,11 +7,7 @@ on:
 
 jobs:
   release:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: windows-latest
 
     steps:
       # 📦 Checkout repo
@@ -35,23 +31,15 @@ jobs:
         env:
           ADBLOCK: true
 
-      # 🐍 Installer Python (universel)
+      # 🐍 Installer Python
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      # 🔐 Build with OpenSSL legacy provider (cross-platform)
+      # 🔐 Build the app (Windows compatible)
       - name: Build the app
         run: npx cross-env NODE_OPTIONS=--openssl-legacy-provider yarn ci-build
         env:
           GH_TOKEN: ${{ secrets.token }}
-          MAC_CERTS: ${{ secrets.mac_certs }}
-          MAC_CERTS_PASSWORD: ${{ secrets.mac_certs_password }}
           RELEASE: false
-
-      # ⚠️ Désactiver la signature macOS si pas de certificat
-      - name: Skip macOS signing if no certificate
-        if: runner.os == 'macOS'
-        run: |
-          echo "sign=false" >> electron-builder.json

@@ -33,6 +33,13 @@ jobs:
         env:
           ADBLOCK: true
 
+      # 🐍 Installer Python sur macOS
+      - name: Setup Python for macOS
+        if: runner.os == 'macOS'
+        run: |
+          brew install python@3
+          ln -sf $(which python3) /usr/bin/python
+
       # 🔐 Build with OpenSSL legacy provider
       - name: Build the app
         run: NODE_OPTIONS=--openssl-legacy-provider yarn ci-build
@@ -41,3 +48,9 @@ jobs:
           MAC_CERTS: ${{ secrets.mac_certs }}
           MAC_CERTS_PASSWORD: ${{ secrets.mac_certs_password }}
           RELEASE: false
+
+      # ⚠️ Désactiver la signature macOS si pas de certificat
+      - name: Skip macOS signing if no certificate
+        if: runner.os == 'macOS'
+        run: |
+          echo "sign=false" >> electron-builder.json

@@ -1,15 +1,15 @@
-name: mSearch Build & Publish
+name: Build mSearch
 
 on:
   push:
     branches:
-      - master
+      - master   # ✅ ta vraie branche
 
 jobs:
-  release:
+  build:
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest] # ❌ macOS supprimé
+        os: [windows-latest, ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
 
@@ -17,29 +17,20 @@ jobs:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
     steps:
-      # 📦 Clone repo
+      # 📦 Clone
       - uses: actions/checkout@v4
 
-      # ⚡ Node 20 + cache Yarn
+      # ⚡ Node
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: yarn
 
-      # 🔧 npm registry safe
-      - run: yarn config set registry https://registry.npmjs.org
-
-      # 📦 install deps
+      # 📦 deps
       - run: yarn install --frozen-lockfile
-        env:
-          ADBLOCK: true
 
-      # 🐍 python (node-gyp)
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
+      # ⭐ build webpack → crée /build
+      - run: yarn build
 
-      # 🔐 Build + Publish auto
-      - name: Build & Publish
-        run: npx cross-env NODE_OPTIONS=--openssl-legacy-provider electron-builder -p always
-        shell: bash
+      # 🔐 package electron
+      - run: npx electron-builder -p always

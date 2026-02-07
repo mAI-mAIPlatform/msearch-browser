@@ -1,6 +1,6 @@
 {
-  "name": "wexond",
-  "version": "6.0.0-nightly.2",
+  "name": "mSearch",
+  "version": "26.7.0",
   "sideEffects": false,
   "description": "Extensible, fast and innovative web browser with material UI.",
   "keywords": [
@@ -13,7 +13,7 @@
   ],
   "homepage": "https://github.com/wexond/wexond#readme",
   "main": "build/main.bundle.js",
-  "author": "Eryk Rakowski <sentialx@gmail.com>",
+  "author": "Mathias Tusseau <mathias.tss2012@gmail.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wexond/wexond.git"

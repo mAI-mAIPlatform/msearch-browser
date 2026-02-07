@@ -15,22 +15,28 @@ jobs:
 
     env:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      NODE_OPTIONS: --openssl-legacy-provider  # ⚡ fix OpenSSL 3
 
     steps:
-      # 📦 Clone
-      - uses: actions/checkout@v4
+      # 📦 Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # ⚡ Node
-      - uses: actions/setup-node@v4
+      # ⚡ Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: yarn
 
-      # 📦 deps
-      - run: yarn install --frozen-lockfile
+      # 📦 Install dependencies
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
-      # ⭐ build webpack → crée /build
-      - run: yarn build
+      # ⭐ Build Webpack renderer & main
+      - name: Build project
+        run: yarn build
 
-      # 🔐 package electron
-      - run: npx electron-builder -p always
+      # 🔐 Package Electron
+      - name: Package Electron app
+        run: npx electron-builder -p always

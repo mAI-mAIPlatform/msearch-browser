@@ -15,29 +15,31 @@ jobs:
 
     steps:
       # 📦 Checkout
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # ⚡ Node moderne + cache Yarn (beaucoup + rapide)
-      - uses: actions/setup-node@v4
+      # ⚡ Setup Node.js 20 + cache Yarn
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: yarn
 
-      # 🔧 Force npm registry (évite bug nlark à vie)
-      - name: Fix registry
+      # 🔧 Force npm registry (évite bug nlark)
+      - name: Fix npm registry
         run: yarn config set registry https://registry.npmjs.org
 
-      # 📦 Install deps
+      # 📦 Install dependencies
       - name: Install dependencies
         run: yarn install --frozen-lockfile
         env:
           ADBLOCK: true
 
       # 🔐 Fix OpenSSL (Webpack + Node 20)
-      - name: Fix OpenSSL legacy provider
+      - name: Enable OpenSSL legacy provider
         run: echo "NODE_OPTIONS=--openssl-legacy-provider" >> $GITHUB_ENV
 
-      # 🧠 Build
+      # 🧠 Build the app
       - name: Build the app
         run: yarn ci-build
         env:

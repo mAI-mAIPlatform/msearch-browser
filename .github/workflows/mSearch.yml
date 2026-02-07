@@ -15,30 +15,48 @@ jobs:
 
     steps:
       # 📦 Checkout repo
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       # ⚡ Node moderne + cache Yarn
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: yarn
 
       # 🔧 Force npm registry
-      - name: Fix registry
+      - name: Fix npm registry
         run: yarn config set registry https://registry.npmjs.org
 
-      # 📦 Install deps
+      # 📦 Install dependencies
       - name: Install dependencies
         run: yarn install --frozen-lockfile
         env:
           ADBLOCK: true
 
-      # 🐍 Installer Python sur macOS
+      # 🐍 Installer Python sur macOS seulement
       - name: Setup Python for macOS
         if: runner.os == 'macOS'
         run: |
           brew install python@3
-          ln -sf $(which python3) /usr/bin/python
+          # ✅ Lien safe dans /usr/local/bin
+          ln -sf $(which python3) /usr/local/bin/python
+
+      # 🔧 Installer Python sur Ubuntu seulement
+      - name: Setup Python for Ubuntu
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-pip
+          sudo ln -sf $(which python3) /usr/local/bin/python
+
+      # 🔧 Installer Python sur Windows seulement
+      - name: Setup Python for Windows
+        if: runner.os == 'Windows'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
 
       # 🔐 Build with OpenSSL legacy provider
       - name: Build the app
@@ -54,3 +72,4 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           echo "sign=false" >> electron-builder.json
+

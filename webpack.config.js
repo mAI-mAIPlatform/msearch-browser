@@ -26,8 +26,8 @@ const mainConfig = getConfig({
       patterns: [
         {
           from:
-            'node_modules/@cliqz/adblocker-electron-preload/dist/index.cjs.js',
-          to: 'index.cjs.js',
+            'node_modules/@cliqz/adblocker-electron-preload/dist/index.cjs',
+          to: 'index2.js',
           transform: async (fileContent, path) => {
             return (
               await terser.minify(fileContent.toString())
